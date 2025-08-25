@@ -1,6 +1,8 @@
 package br.com.microservices.orchestrated.orchestratorservice.config.kafka;
 
+import br.com.microservices.orchestrated.orchestratorservice.core.enums.ETopics;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
 
 import java.util.HashMap;
@@ -24,15 +27,20 @@ consumer group-id e auto-offeset-reset que definimos no applicatio.yl do projeto
 @RequiredArgsConstructor()
 public class KafkaConfig {
 
-    @Value("${spring.kafka.bootstrap-servers") /*aqui passamos o caminho da propriedade dentro do application.yl
+
+    private static final Integer PARTITION_COUNT = 1; /*Qtd de partições estátic*/
+    private static final Integer REPLICA_COUNT = 1; /*Qtd de replica*/
+
+
+    @Value("${spring.kafka.bootstrap-servers}") /*aqui passamos o caminho da propriedade dentro do application.yl
      se tiver variavel de ambiente ele vai dar prioridade ao valor dela*/
     private String boostrapServers; /*é o mesmo que passamos no applicatiom.yl*/
 
-    @Value("${spring.kafka.consumer-group-id") /*aqui passamos o caminho da propriedade dentro do application.yl
+    @Value("${spring.kafka.consumer.group-id}") /*aqui passamos o caminho da propriedade dentro do application.yl
     se tiver variavel de ambiente ele vai dar prioridade ao valor dela*/
     private String grouId;
 
-    @Value("${spring.kafka.consumer-auto-offset-reset") /*aqui passamos o caminho da propriedade dentro do application.yl
+    @Value("${spring.kafka.consumer.auto-offset-reset}") /*aqui passamos o caminho da propriedade dentro do application.yl
      se tiver variavel de ambiente ele vai dar prioridade ao valor dela*/
     private String autoOffsetReset;
 
@@ -144,4 +152,111 @@ produzindo, é serializar, porque vamos estar serializando a informação
          que ai quando formos dar um  producerFactory.send("") ele já vai vir com toda essa configuração*/
     }
 
+    /*Método de builde(construtor) de tópico */
+    private NewTopic buildTopic(String name) {
+        return TopicBuilder
+                .name(name) /*define o nome do tópico*/
+                .replicas(REPLICA_COUNT) /*define o replica do tópico, criamos
+                um atributo estático para passar esse valor nesse
+                caso estamos passando só 1 replica para o tópico*/
+                .partitions(PARTITION_COUNT) /*define o replica do tópico, criamos
+                um atributo estático para passar esse valor nesse
+                caso estamos passando só 1 replica para o tópico*/
+                .build();/*define o nome do tópico*/
+    }
+
+    @Bean
+    public NewTopic startSagaTopic() {
+        return buildTopic(ETopics.START_SAGA.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+
+    @Bean
+    public NewTopic orchestratorTopic() {
+        return buildTopic(ETopics.BASE_ORCHESTRATOR.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+
+    @Bean
+    public NewTopic finishSuccessTopic() {
+        return buildTopic(ETopics.FINISH_SUCCESS.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+
+    @Bean
+    public NewTopic finishFailTopic() {
+        return buildTopic(ETopics.FINISH_FAIL.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+
+    @Bean
+    public NewTopic productValidationSuccessTopic() {
+        return buildTopic(ETopics.PRODUCT_VALIDATION_SUCCESS.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+
+    @Bean
+    public NewTopic productValidationFailTopic() {
+        return buildTopic(ETopics.PRODUCT_VALIDATION_FAIL.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+
+
+    @Bean
+    public NewTopic paymentSuccessTopic() {
+        return buildTopic(ETopics.PAYMENT_SUCCESS.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+    @Bean
+    public NewTopic paymentFailTopic() {
+        return buildTopic(ETopics.PAYMENT_FAIL.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+
+    @Bean
+    public NewTopic inventorySuccessTopic() {
+        return buildTopic(ETopics.INVENTORY_SUCCESS.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+    @Bean
+    public NewTopic inventoryFailTopic() {
+        return buildTopic(ETopics.INVENTORY_FAIL.getTopic()); /*pegando
+        tópico do enum e o enum tem o valor com o nome do tópico
+        no application.yl ele puxa de la, tem como importar o tópico de maneira estática
+         sem passar o nome da classe ETopics do Enu*/
+
+    }
+
+    @Bean
+    public NewTopic notifyEndingTopic() {
+
+        return buildTopic(ETopics.NOTIFY_ENDING.getTopic());
+    }
 }

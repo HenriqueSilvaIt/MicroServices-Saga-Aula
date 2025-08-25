@@ -1,6 +1,7 @@
 package br.com.microservices.orchestrated.orderservice.config.kafka;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
 
 import javax.swing.*;
@@ -25,15 +27,26 @@ consumer group-id e auto-offeset-reset que definimos no applicatio.yl do projeto
 @RequiredArgsConstructor()
 public class KafkaConfig {
 
-    @Value("${spring.kafka.bootstrap-servers") /*aqui passamos o caminho da propriedade dentro do application.yl
+
+    private static final Integer PARTITION_COUNT = 1; /*Qtd de partições estátic*/
+    private static final Integer REPLICA_COUNT = 1; /*Qtd de replica*/
+
+    @Value("${spring.kafka.topic.start-saga}")
+    private String startSagaTopic; /*pega o nome do tópico passado no application.yl*/
+
+    @Value("${spring.kafka.topic.notify-ending}")
+    private String notifyEnding; /*pega o nome do tópico passado no application.yl*/
+
+
+    @Value("${spring.kafka.bootstrap-servers}") /*aqui passamos o caminho da propriedade dentro do application.yl
      se tiver variavel de ambiente ele vai dar prioridade ao valor dela*/
     private String boostrapServers; /*é o mesmo que passamos no applicatiom.yl*/
 
-    @Value("${spring.kafka.consumer-group-id") /*aqui passamos o caminho da propriedade dentro do application.yl
+    @Value("${spring.kafka.consumer.group-id}") /*aqui passamos o caminho da propriedade dentro do application.yl
     se tiver variavel de ambiente ele vai dar prioridade ao valor dela*/
     private String grouId;
 
-    @Value("${spring.kafka.consumer-auto-offset-reset") /*aqui passamos o caminho da propriedade dentro do application.yl
+    @Value("${spring.kafka.consumer.auto-offset-reset}") /*aqui passamos o caminho da propriedade dentro do application.yl
      se tiver variavel de ambiente ele vai dar prioridade ao valor dela*/
     private String autoOffsetReset;
 
@@ -143,6 +156,37 @@ produzindo, é serializar, porque vamos estar serializando a informação
         return new KafkaTemplate<>(producerFactory); /*como criamos o bean producerFactory
          aqui na classe de configuração, aqui estamos injetando essas configurações no KafkaTemplate
          que ai quando formos dar um  producerFactory.send("") ele já vai vir com toda essa configuração*/
+    }
+
+    /*Método de builde(construtor) de tópico */
+    private NewTopic buildTopic(String name) {
+        return TopicBuilder
+                .name(name) /*define o nome do tópico*/
+                .replicas(REPLICA_COUNT) /*define o replica do tópico, criamos
+                um atributo estático para passar esse valor nesse
+                caso estamos passando só 1 replica para o tópico*/
+                .partitions(PARTITION_COUNT) /*define o replica do tópico, criamos
+                um atributo estático para passar esse valor nesse
+                caso estamos passando só 1 replica para o tópico*/
+                .build();/*define o nome do tópico*/
+    }
+
+
+    @Bean /*método tópico startSaga*/
+    public NewTopic startSagaTopic() {
+
+        return buildTopic(startSagaTopic); /*cria um tópico
+         pegando o nome lá do application.yl
+        e usando o método buildTopic daqui da classe para criar o tópico*/
+    }
+
+
+    @Bean /*método tópico startSaga*/
+    public NewTopic notifyEndingTopic() {
+
+        return buildTopic(notifyEnding); /*cria um tópico
+         pegando o nome lá do application.yl
+        e usando o método buildTopic daqui da classe para criar o tópico*/
     }
 
 }

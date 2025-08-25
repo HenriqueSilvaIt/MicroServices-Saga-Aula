@@ -1,4 +1,4 @@
-package br.com.microservices.orchestrated.orchestratorservice.utils;
+package br.com.microservices.orchestrated.orchestratorservice.core.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum ETopics {
 
     START_SAGA("start-saga"),
-    BASE_ORCHESTRATOR("orquestrator"),
+    BASE_ORCHESTRATOR("orchestrator"),
     FINISH_SUCCESS("finish_success"),
     FINISH_FAIL("finish-fail"),
     PRODUCT_VALIDATION_SUCCESS("product-validation-success"),
