@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,8 +15,13 @@ import java.util.List;
 @Builder /*ajuda na construção do objeto order que tem vários parâmetro*/
 @NoArgsConstructor /* ANotation do lombok cria construtor sem argumentos*/
 @AllArgsConstructor /* ANotation do lombokcria construtor com argumento*/
+
+/*Anotações do mongodb*/
+@Document(collection = "event") /*aqui passamos o nome da coleção do mondo no mongo
+db*/
 public class Event {
 
+    @Id /*aponta qual é o campo identificador, que id*/
     private String id;
     private String transactionId; /*id da transação atual*/
     private String orderId; /*id do pedido, n tem necessidade mais é mais facil

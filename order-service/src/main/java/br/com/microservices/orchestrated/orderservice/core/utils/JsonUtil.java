@@ -16,7 +16,7 @@ public class JsonUtil {
     }*/
 
     /*Converte qualquer objeto para String(JSON)*/
-    private String toJson(Object object) {
+    public String toJson(Object object) {
 
         try{
 
