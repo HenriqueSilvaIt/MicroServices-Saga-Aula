@@ -1,6 +1,7 @@
 package br.com.microservices.orchestrated.orderservice.core.consumer;
 
 import br.com.microservices.orchestrated.orderservice.core.document.Event;
+import br.com.microservices.orchestrated.orderservice.core.services.EventService;
 import br.com.microservices.orchestrated.orderservice.core.utils.JsonUtil;
 import io.swagger.v3.core.util.Json;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
 e vamos conseguir injetar depêndencia dessa classe*/
 @AllArgsConstructor /*constroi construtor padrão e com argumento*/
 public class EventConsumer {
+
+    private final EventService service;
 
     private final JsonUtil jsonUtil; /* PRECISa dele
     para fazer a conversão de Json que vamos recuperar do kafk para objeto*/
@@ -28,5 +31,6 @@ public class EventConsumer {
         informação que recebemos*/
         Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
+        service.notifyEnding(event); /*salva o evento no banco*/
     }
 }
