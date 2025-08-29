@@ -5,6 +5,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -119,7 +120,7 @@ public class KafkaConfig {
              /*chave
             estamos pegando o nome do servidor da próprio classe ProducerConfig, e informando o
             servidor do kafka como valor*/
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringDeserializer.class); /*
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class); /*
             para enviar ou consumir do Kafka temos que informar o tipo
              de dados que estamos serializando no caso de em envio(producer) para o kafka
              ou deserializando no caso de um Consumer, então se estamos consumindo
@@ -130,7 +131,7 @@ public class KafkaConfig {
              n vamos definir
 produzindo, é serializar, porque vamos estar serializando a informação
              StringDeserializer.class é uma classe do Kafka*/
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringDeserializer.class); /*
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class); /*
             para enviar ou consumir do Kafka temos que informar o tipo
              de dados que estamos serializando no caso de em envio(producer) para o kafka
              ou deserializando no caso de um Consumer, então se estamos consumindo

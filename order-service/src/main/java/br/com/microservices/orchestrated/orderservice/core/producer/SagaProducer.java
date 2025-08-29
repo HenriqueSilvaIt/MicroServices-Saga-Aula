@@ -37,7 +37,7 @@ public class SagaProducer {
                * send(String topic, Integer partition, Long timestamp, K key, @Nullable V data)*/
         } catch (Exception e ) {
             /*vai mostrar porque deu erro ao enviar o evento*/
-            log.error("Error trying to send data to topic {} with data {}", startSagaTopic, payload,e.getMessage());
+            log.error("Error trying to send data to topic {} with data {}", startSagaTopic, payload, e);
         }
     }
 

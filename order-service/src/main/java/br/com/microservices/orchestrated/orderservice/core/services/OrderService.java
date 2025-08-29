@@ -9,6 +9,7 @@ import br.com.microservices.orchestrated.orderservice.core.repositories.OrderRep
 import br.com.microservices.orchestrated.orderservice.core.utils.JsonUtil;
 import io.swagger.v3.core.util.Json;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @AllArgsConstructor /*Construtor com todos argumentp*/
 public class OrderService  /*para de fato fazer o pedido , que é só salvar o pedido e mandar
@@ -64,9 +66,9 @@ para o producer*/{
 
         /*cria o payload, então crio um objeto do tipo evento
         * com os dados do pedido */
-        Event event = createPayload(order);
+       // Event event = createPayload(order);
         /*envia o evento*/
-        producer.sendEvent(jsonUtil.toJson(event));/*converte para Json(string e envia o evento)*/
+        producer.sendEvent(jsonUtil.toJson(createPayload(order)));/*converte para Json(string e envia o evento)*/
         return order; /*retorna o objeto criado com id do mongodb*/
 
     }

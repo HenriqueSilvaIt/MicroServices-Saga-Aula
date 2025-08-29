@@ -15,7 +15,7 @@ import java.util.List;
 public class OrderDTO {
 
 
-    private List<Product> products; /*Recebe a lista de produtos*/
+    private List<OrderProducts> products; /*Recebe a lista de produtos*/
 
 
 }

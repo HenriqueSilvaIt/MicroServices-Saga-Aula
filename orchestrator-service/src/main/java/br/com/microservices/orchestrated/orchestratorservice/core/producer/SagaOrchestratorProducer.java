@@ -1,9 +1,7 @@
 package br.com.microservices.orchestrated.orchestratorservice.core.producer;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component /*para especificar que essa classe é um componente do spring
 e vamos conseguir injetar depêndencia dessa classe*/
 @AllArgsConstructor /*constroi construtor padrão e com argumento*/
-public class SagaOrquestratorProducer {
+public class SagaOrchestratorProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate; /*esse método
     é um bean da classe KafkaConfig e vamos injetar ele aqui atraves

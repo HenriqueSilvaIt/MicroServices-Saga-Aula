@@ -3,7 +3,7 @@ server:
 
 spring:
   kafka:
-    bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
+    bootstrap-servers: ${KAFKA_BROKER:172.22.79.10:9092}
     topic:
       start-saga: start-saga
       notify-ending: notify-ending
@@ -14,7 +14,8 @@ spring:
   data:
     mongodb:
       database: admin
-      uri: ${MONGO_DB_URI:mongodb://admin:123456@localhost:27017}
+      uri: ${MONGO_DB_URI:mongodb://admin:123456@172.22.79.10:27017}
+      #eu passei ao invés do localhost passei o ip do wsl 172.22.79.10 para conectar ao mongo
 
 logging:
   level:
