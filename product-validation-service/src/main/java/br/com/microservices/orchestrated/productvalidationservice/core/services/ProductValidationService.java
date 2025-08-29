@@ -122,7 +122,7 @@ public class ProductValidationService {
 
         /*validata se o produto existe*/
     public void validateExistingProduct(String code) {
-        if (productRepository.existsByCode(code)){
+        if (!productRepository.existsByCode(code)){
             throw new ValidationException("Product does not exists in database");
         }
 
@@ -186,6 +186,9 @@ public class ProductValidationService {
 
     }
 
+    /* esse método quando o do pedido ou da trnsação
+    *          n existir ele vai criar um registro no
+    * banco de rollback da mesma forma*/
     private void changeValidationToFail(Event event) {
         validationRepository
                 .findByOrderIdAndTransactionId(
