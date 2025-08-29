@@ -1,6 +1,7 @@
 package br.com.microservices.orchestrated.productvalidationservice.core.dto;
 
 
+import br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class History {
 
     private String source; /*origem, em outros serviços pode ser um enum ou string, mas
     aqui vai ser só string*/
-    private String ESagaStatus; /* status, pode ser enum ou string, mas vamos
+    private ESagaStatus status; /* status, pode ser enum ou string, mas vamos
     usar como string aqui, só usamos em enum em dados que queremos manipular
     para utilizar em regra de negócio e etc*/
     private String message; /*mensagem*/
