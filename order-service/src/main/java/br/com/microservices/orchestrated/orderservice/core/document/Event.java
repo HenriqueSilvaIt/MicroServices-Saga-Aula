@@ -21,7 +21,7 @@
     public class Event {
 
         @Id /*aponta qual é o campo identificador, que id*/
-        private String id;
+        private String id; // id no mongo db é string
         private String transactionId; /*id da transação atual*/
         private String orderId; /*id do pedido, n tem necessidade mais é mais facil
         deixar o id do pedido aqui no evento*/

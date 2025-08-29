@@ -24,7 +24,7 @@ db*/
 public class Order {
 
     @Id /*aponta qual é o campo identificador, que id*/
-    private String id; /*id do pedido*/
+    private String id; /*id do pedido, no mongo db id é string*/
     private List<OrderProducts>  products; /*lista de produto*/
     private LocalDateTime createAt; /*Data de criação do pedido*/
     private String transactionId; /*id da transação atual*/
