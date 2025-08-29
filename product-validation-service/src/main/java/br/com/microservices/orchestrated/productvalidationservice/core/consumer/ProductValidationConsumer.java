@@ -3,6 +3,7 @@ package br.com.microservices.orchestrated.productvalidationservice.core.consumer
 
 
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.Event;
+import br.com.microservices.orchestrated.productvalidationservice.core.services.ProductValidationService;
 import br.com.microservices.orchestrated.productvalidationservice.core.utils.JsonUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 e vamos conseguir injetar depêndencia dessa classe*/
 @AllArgsConstructor /*constroi construtor padrão e com argumento*/
 public class ProductValidationConsumer {
+
+    private final ProductValidationService productValidationService;
 
     private final JsonUtil jsonUtil; /* PRECISa dele
     para fazer a conversão de Json que vamos recuperar do kafk para objeto*/
@@ -29,6 +32,9 @@ public class ProductValidationConsumer {
         informação que recebemos*/
         Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
+        productValidationService.validateExistingProducts(event); /*
+        faz validação do produto, quando o orchestrador manda
+        um evento de sucesso*/
     }
 
     @KafkaListener(
@@ -40,6 +46,9 @@ public class ProductValidationConsumer {
         informação que recebemos*/
         Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
+        productValidationService.rollbackEvent(event); /*
+        faz rollback quando orchestrador manda um evento de falha*/
+
     }
 
 
