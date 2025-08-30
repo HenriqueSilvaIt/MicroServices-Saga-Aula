@@ -126,7 +126,7 @@ public class PaymentService {
         event.setStatus(ESagaStatus.SUCCESS); /*coloca a informação de sucesso*/
         event.setSource(CURRENT_SOURCE); /*nome da origem do evento setado
         com o nome do topico do product servic*/
-        addHistory(event, "Payment realized successfully"); /*
+        addHistory(event, "Payment realized successfully! "); /*
         adicionando histórico ao evento e mensagem de validação de sucesso*/
     }
 

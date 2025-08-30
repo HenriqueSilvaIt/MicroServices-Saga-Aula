@@ -2,12 +2,15 @@ package br.com.microservices.orchestrated.inventoryservice.core.dto;
 
 
 
+import br.com.microservices.orchestrated.inventoryservice.core.enums.ESagaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data /* ANotation do lombok cria get, set equals e hash code*/
@@ -22,7 +25,19 @@ public class Event {
     deixar o id do pedido aqui no evento*/
     private Order payload; /*os dados do pedido que será alterado e utilizado par amanipular as regras de negócio*/
     private String source; /*qual origem do evento */
-    private String ESagaStatus; /*status do evento*/
+    private ESagaStatus status; /*status do evento*/
     private List<History> eventHistory; /*estamos vinculando um array do historico do evento */
     private LocalDateTime createdAt; /*data de criação do evento*/
+
+
+    /*método para adiconar uma lista de historico ao evento*/
+    public void addToHistory(History history) {
+
+        if (ObjectUtils.isEmpty(eventHistory)) {
+            eventHistory = new ArrayList<>(); /*se tiver
+                vazio vai ser uma lista vazia*/
+        }
+
+        eventHistory.add(history); /*adiciona o history que estamos passando*/
+    }
 }
