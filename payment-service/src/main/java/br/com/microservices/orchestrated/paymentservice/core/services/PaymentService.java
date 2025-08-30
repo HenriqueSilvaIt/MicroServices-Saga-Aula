@@ -180,7 +180,6 @@ public class PaymentService {
          ou outra coisa*/
             }
 
-
         producer.sendEvent(jsonUtil.toJson(event));
     }
 

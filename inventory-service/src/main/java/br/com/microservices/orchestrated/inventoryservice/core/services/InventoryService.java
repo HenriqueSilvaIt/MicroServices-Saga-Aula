@@ -36,11 +36,18 @@ public class InventoryService {
             checkCurrentValidation(event); /*para evitar eventos duplicado
            e resolver o problema da idempotência*/
             createOrderInventory(event);
+            updateInventory(event.getPayload()); /*atualiza o estoque*/
             handleSuccess(event); /*setando evento de sucesso*/
 
         } catch(Exception e) {
             log.error("Error trying to update inventory: ", e);
+            handleFailCurrentNotExecuted(event, e.getMessage()); /*
+            passa o status de pendente de rollback por que deu erro
+            no inventory e atualiza o histórico do evento
+            com informações que deu erro*/
         }
+        producer.sendEvent(jsonUtil.toJson(event));
+
     }
 
 
@@ -97,6 +104,55 @@ public class InventoryService {
         event.addToHistory(history);
     }
 
+    private void handleFailCurrentNotExecuted(Event event, String message) {
+
+        event.setStatus(ESagaStatus.ROLLBACK_PENDING); /*coloca a informação de rollback no evento*/
+        event.setSource(CURRENT_SOURCE); /*nome da origem do evento setado
+        com o nome do tópico do product servic*/
+        addHistory(event, "Fail to update inventory: ".concat(message)); /*
+        adicionando histórico ao evento e mensagem de validação de sucesso*/
+    }
+
+    public void rollbackInventory(Event event) {
+
+        event.setStatus(ESagaStatus.FAIL); /*status de erro no evento*/
+        event.setSource(CURRENT_SOURCE); /*origem  nome do tópico*/
+        try {
+            returnInventoryToPreviousValue(event);
+
+            addHistory(event, "Rollback executed for inventory"); /*informando
+        que o rollback foi realizado no banco e se for em prod
+        informa que também foi realizado na API de integração*/
+        } catch(Exception e ) {
+            addHistory(event, "Rollback not executed for inventory".concat(e.getMessage())); /*informando
+        que o rollback não foi realizado provavelmente
+        porque deu uma falha para encontrar o id do evento no banco ou do produto
+         ou outra coisa*/
+        }
+
+        producer.sendEvent(jsonUtil.toJson(event));
+
+    }
+
+    private void returnInventoryToPreviousValue(Event event) {
+
+        orderInventoryRepository
+                .findByOrderIdAndTransactionId(event.getPayload().getId(),
+                        event.getTransactionId()) /*busca todos OrderInventory que existe para esse orderId e transactionalId e abaixo
+                        para cada evento encontrado  ele restaura a quantidade de produto no estoque por conta do rollback*/
+                .forEach(orderInventory -> {
+                    Inventory inventory = orderInventory.getInventory();
+                    inventory.setAvailable(orderInventory.getOldQuantity());
+                    /*aplica o valor anterior do estoque para fazer o rollback*/
+                    inventoryRepository.save(inventory);
+                    log.info("Restores inventory for oder {} from {} to {} ",
+                    event.getPayload().getId(), /*id do pedido*/
+                    orderInventory.getNewQuantity(), /*quantidade que usuário
+                    inseriu*/
+                    inventory.getAvailable());
+                });
+    }
+
     private void updateInventory(Order order) {
         /*pegar a lista de produtos no pedido*/
         order
@@ -115,7 +171,7 @@ public class InventoryService {
     /*Método para validar se a quantidade produto solicita existe no estoque*/
     private void checkInventory(Integer available, Integer orderQuantity) {
         if (orderQuantity > available) {
-            throw  new ValidationException("Product id out of stock!")
+            throw  new ValidationException("Product id out of stock!");
 
         }
     }
