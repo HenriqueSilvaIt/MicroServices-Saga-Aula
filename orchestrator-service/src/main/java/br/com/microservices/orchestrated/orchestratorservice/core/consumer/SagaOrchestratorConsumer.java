@@ -2,6 +2,7 @@ package br.com.microservices.orchestrated.orchestratorservice.core.consumer;
 
 
 import br.com.microservices.orchestrated.orchestratorservice.core.dto.Event;
+import br.com.microservices.orchestrated.orchestratorservice.core.services.OrchestratorService;
 import br.com.microservices.orchestrated.orchestratorservice.utils.JsonUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
 e vamos conseguir injetar depêndencia dessa classe*/
 @AllArgsConstructor /*constroi construtor padrão e com argumento*/
 public class SagaOrchestratorConsumer {
+
+    private final OrchestratorService orchestratorService;
 
     private final JsonUtil jsonUtil; /* PRECISa dele
     para fazer a conversão de Json que vamos recuperar do kafk para objeto*/
@@ -28,6 +31,7 @@ public class SagaOrchestratorConsumer {
         informação que recebemos*/
         Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
+        orchestratorService.startSaga(event);
     }
 
     @KafkaListener(
@@ -39,6 +43,7 @@ public class SagaOrchestratorConsumer {
         informação que recebemos*/
         Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
+        orchestratorService.continueSaga(event);
     }
 
     @KafkaListener(
@@ -50,6 +55,9 @@ public class SagaOrchestratorConsumer {
         informação que recebemos*/
         Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
+
+        orchestratorService.finishSagaSuccess(event);
+
     }
 
     @KafkaListener(
@@ -61,5 +69,8 @@ public class SagaOrchestratorConsumer {
         informação que recebemos*/
         Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
+
+        orchestratorService.finishSagaFail(event);
+
     }
 }
