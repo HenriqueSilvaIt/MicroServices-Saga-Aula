@@ -2,6 +2,8 @@ package br.com.microservices.orchestrated.paymentservice.core.consumer;
 
 
 import br.com.microservices.orchestrated.paymentservice.core.dto.Event;
+import br.com.microservices.orchestrated.paymentservice.core.model.Payment;
+import br.com.microservices.orchestrated.paymentservice.core.services.PaymentService;
 import br.com.microservices.orchestrated.paymentservice.core.utils.JsonUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Component;
 e vamos conseguir injetar depêndencia dessa classe*/
 @AllArgsConstructor /*constroi construtor padrão e com argumento*/
 public class PaymentConsumer {
+
+    private final PaymentService paymentService;
 
     private final JsonUtil jsonUtil; /* PRECISa dele
     para fazer a conversão de Json que vamos recuperar do kafk para objeto*/
@@ -28,7 +32,9 @@ public class PaymentConsumer {
         informação que recebemos*/
         Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
-    }
+        paymentService.realizePayment(event); /*passando
+        ação de sucesso no evento, caso não de nenhuma falha*/
+     }
 
     @KafkaListener(
             groupId = "${spring.kafka.consumer.group-id}", /*colocamos o group id que está application.yl*/
@@ -39,6 +45,7 @@ public class PaymentConsumer {
         informação que recebemos*/
         Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
+        paymentService.realizeRefund(event);
     }
 
 

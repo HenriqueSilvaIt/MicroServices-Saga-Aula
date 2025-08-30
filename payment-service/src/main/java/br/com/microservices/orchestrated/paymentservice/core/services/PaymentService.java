@@ -52,6 +52,10 @@ public class PaymentService {
         } catch (Exception e) {
 
             log.error("Error trying to make payment", e);
+            handleFailCurrentNotExecuted(event, e.getMessage()); /*
+            passa o status de pendente de rollback por que deu erro
+            no pagamento e atualiza o histórico do evento
+            com informações que deu erro*/
         }
 
         producer.sendEvent(jsonUtil.toJson(event)); /*criar um tópico
@@ -148,6 +152,49 @@ public class PaymentService {
             }
         }
 
+
+    private void handleFailCurrentNotExecuted(Event event, String message) {
+
+        event.setStatus(ESagaStatus.ROLLBACK_PENDING); /*coloca a informação de rollback no evento*/
+        event.setSource(CURRENT_SOURCE); /*nome da origem do evento setado
+        com o nome do tópico do product servic*/
+        addHistory(event, "Fail to realized payment: ".concat(message)); /*
+        adicionando histórico ao evento e mensagem de validação de sucesso*/
+    }
+
+    public void realizeRefund(Event event) {
+        event.setStatus(ESagaStatus.FAIL); /*status de erro no evento*/
+        event.setSource(CURRENT_SOURCE);
+            try {
+                changePaymentStatusToRefund(event); /*muda o status do pagamento
+        para recusado no banco em caso de falha no pagamento*/
+
+                addHistory(event, "Rollback executed for payment"); /*informando
+        que o rollback foi realizado no banco e se for em prod
+        informa que também foi realizado na API de integração*/
+            } catch(Exception e ) {
+                addHistory(event, "Rollback not executed for payment".concat(e.getMessage())); /*informando
+        que o rollback não foi realizado provavelmente
+        porque deu uma falha para encontrar o id do evento no banco ou do produto
+         ou outra coisa*/
+            }
+
+
+        producer.sendEvent(jsonUtil.toJson(event));
+    }
+
+    private  void changePaymentStatusToRefund(Event event) {
+            Payment payment = findByOrderIdAndTransactionId(event); /*vai pegar
+            o pagamento pelo id da transação(do evento)*/
+            payment.setStatus(EPaymentStatus.REFUND); /*colocar o status para recusado*/
+            setEventAmountItens(event, payment); /*passando o valor da quantidade
+            de produtos e valor total do pedido para no evento*/
+            save(payment); /*salva no banco de dados o status de pagamento recusado
+            se tivesse uma integração com banco teria que ter um serviço para
+            fazer uma chamada para api do banco solicitando o estorno para o cliente
+            que fez o pedido, isso se o pedido foi realizado e preciso de rollback*/
+    }
+
         /*retornando  pagamento do banco de dados, pela
         * informações do evento, se der sucesso
         * quer dizer que já foi criado o pagamento no banco de dados*/
@@ -156,7 +203,11 @@ public class PaymentService {
                     .findByOrderIdAndTransactionId(event.getPayload().getId(),
                             event.getTransactionId())
                     .orElseThrow(() -> new ValidationException("Payment not found by" +
-                            "OrderId and TransactionId"));
+                            " OrderId and TransactionId")); /*o
+                            pagamento é sempre único
+                            não podemos gerar outro
+                            como fazemos no product-validation,
+                            aqui se n encontrou lança erro*/
     }
 
 
