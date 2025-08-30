@@ -65,7 +65,8 @@ public class PaymentService {
 
 
 
-    /*verifica se todos os produtos , o id do pedido e da transação foram informados*/
+    /*verifica se todos os produtos , o id do pedido e da transação foram informados
+    * resolve o problema da idempotencia, para evitar eventos duplicado*/
     private void checkCurrentValidation(Event event) {
 
         /*Valida se já tem algum evento existente com esses mesmo
