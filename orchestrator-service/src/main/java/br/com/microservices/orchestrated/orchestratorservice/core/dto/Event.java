@@ -1,6 +1,8 @@
 package br.com.microservices.orchestrated.orchestratorservice.core.dto;
 
 
+import br.com.microservices.orchestrated.orchestratorservice.core.enums.EEventSource;
+import br.com.microservices.orchestrated.orchestratorservice.core.enums.ESagaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,8 +22,8 @@ public class Event {
     private String orderId; /*id do pedido, n tem necessidade mais é mais facil
     deixar o id do pedido aqui no evento*/
     private Order payload; /*os dados do pedido que será alterado e utilizado par amanipular as regras de negócio*/
-    private String source; /*qual origem do evento */
-    private String EEventSource; /*status do evento aqui é enum, só usamos em enum em dados que queremos manipular
+    private EEventSource source; /*qual origem do evento */
+    private ESagaStatus status; /*status do evento aqui é enum, só usamos em enum em dados que queremos manipular
     para utilizar em regra de negócio e etc*/
     private List<History> eventHistory; /*estamos vinculando um array do historico do evento */
     private LocalDateTime createdAt; /*data de criação do evento*/

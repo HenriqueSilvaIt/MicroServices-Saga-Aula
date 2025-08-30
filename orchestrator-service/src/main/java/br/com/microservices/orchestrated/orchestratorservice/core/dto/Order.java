@@ -17,7 +17,7 @@ import java.util.List;
 public class Order {
 
     private String id; /*id do pedido*/
-    private List<Product>  products; /*lista de produto*/
+    private List<OrderProducts>  products; /*lista de produto*/
     private LocalDateTime createAt; /*Data de criação do pedido*/
     private String transactionId; /*id da transação atual*/
     private Double totalAmount; /*total do pedido ou venda*/

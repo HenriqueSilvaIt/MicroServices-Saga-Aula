@@ -65,7 +65,7 @@ que essa classe é unica*/  class SagaHandler {
     public static final Integer EVENT_SOURCE_INDEX = 0; /*A origem
      SOURCE que é o nome do serviço fica na coluna 0 da matriz que é a primeira coluna, porque matriz em java
      começa com a coluna zer o*/
-    public static final Integer EVENT_STATU_INDEX = 1; /*O STATUS
+    public static final Integer EVENT_STATUS_INDEX = 1; /*O STATUS
      do evento fica na coluna 1 da matriz que é a segunda coluna, porque matriz em java
      começa com a coluna 0*/
     public static final Integer TOPIC_INDEX = 2; /*O TÓPICO

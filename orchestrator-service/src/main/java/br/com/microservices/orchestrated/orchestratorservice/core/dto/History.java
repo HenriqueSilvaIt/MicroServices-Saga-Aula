@@ -1,6 +1,7 @@
 package br.com.microservices.orchestrated.orchestratorservice.core.dto;
 
 
+import br.com.microservices.orchestrated.orchestratorservice.core.enums.EEventSource;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class History {
 
     private String source; /*origem, em outros serviços pode ser um enum ou string, mas
     aqui vai ser só string*/
-    private String EEventSource; /* status aqui é enum, só usamos em enum em dados que queremos manipular
+    private EEventSource status; /* status aqui é enum, só usamos em enum em dados que queremos manipular
     para utilizar em regra de negócio e etc*/
     private String message; /*mensagem*/
     private LocalDateTime createdAt; /*data que foi criado o evento*/
