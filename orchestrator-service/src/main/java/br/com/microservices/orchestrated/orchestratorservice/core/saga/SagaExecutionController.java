@@ -26,7 +26,7 @@ public class SagaExecutionController /*Controller
  Essa classe vai percorrer a matriz do SagaHandler para fazer toda lógica de orchestração
  */{
 
-     private final static String SAGA_LOG_ID = "ORDER ID: %s | TRANSACTION ID/ %s | EVENT ID s%";
+     private final static String SAGA_LOG_ID = "ORDER ID: %s | TRANSACTION ID %s | EVENT ID %s";
 
      public ETopics getNextTopic(Event event) {
 
@@ -43,9 +43,9 @@ public class SagaExecutionController /*Controller
 
 
      private ETopics findTopicBySourceAndStatus(Event event) {
-        return (ETopics) /*casting para ETopics por que estamos
+     /*casting para ETopics por que estamos
         trabalhando com Object e precisa converter para ETopics que é o que
-        o método espera retorna*/  (Arrays.stream(SAGA_HANDLER) /*converte o arra em uma colections,
+        o método espera retorna*/    return (ETopics) (Arrays.stream(SAGA_HANDLER) /*converte o arra em uma colections,
         ai vamos percorrer o array matriz como se fosse um string de dados*/
                 .filter(row -> isEventSourceAndStatusValid(event, row)) /*filte
                 r do JavaCollection sempre retorna um boolena, aqui ele está filtrando
@@ -58,15 +58,15 @@ public class SagaExecutionController /*Controller
 
      /*Valida se SOURCE (serviço) STatus (status do evento) existe na matriz Saga
      * handler*/
-     private boolean isEventSourceAndStatusValid(Event event,  Object [] row /*linha
-     para percorrer cada linha, como Object [] [] é uma matriz o Object [] é só as linhas*/) {
+     private boolean isEventSourceAndStatusValid(Event event,  Object[] row)/*linha
+     para percorrer cada linha, como Object [] [] é uma matriz o Object [] é só as linhas*/ {
 
          /*Recuperando o valor da coluna do SOURCE e STATUS*/
 
-         Object source = row[EVENT_SOURCE_INDEX]; /*RECUPERAmos o item da primeira coluna*/
-         Object status = row[EVENT_STATUS_INDEX]; /*RECUPERAmos o item da segunda coluna*/
+         var source = row[EVENT_SOURCE_INDEX]; /*RECUPERAmos o item da primeira coluna*/
+         var status = row[EVENT_STATUS_INDEX]; /*RECUPERAmos o item da segunda coluna*/
 
-         return event.getSource().equals(source) && event.getStatus().equals(status); /*
+         return source.equals(event.getSource()) && status.equals(event.getStatus());/*
          Valida se o  SOURCE (SERVIÇO) e STATUS do evento, é o mesmo status das variaveis
          que passamos acima, que representa a coluna 0 e 1 da matriz*/
      }
@@ -77,7 +77,7 @@ public class SagaExecutionController /*Controller
     private void logCurrentSaga(Event event /*evento atual*/ , ETopics topic /*topico encontrado*/) {
 
         String sagaId = createSagaId(event); /*pega do evento o Id do pedido, id da transação e o id do evento*/
-        ESagaStatus  source = event.getStatus();
+        var  source = event.getSource();
         switch (event.getStatus())  /*estrutura caso*/{
             case SUCCESS -> log.info("### CURRENT SAGA: {} | SUCCESS | NEXT TOPIC {} | {}",
                     source /*serviços atual*/, topic /*tópico passado*/, sagaId /*composto porId do pedido, id da transação e o id do evento */  );

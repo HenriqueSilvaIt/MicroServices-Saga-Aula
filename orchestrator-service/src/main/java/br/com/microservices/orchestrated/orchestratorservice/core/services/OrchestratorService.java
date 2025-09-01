@@ -61,7 +61,7 @@ public class OrchestratorService {
         porque o evento começa no nosso orchestrador*/
         event.setStatus(ESagaStatus.FAIL); /*Como o evento está
         iniciando ainda ele começa com sucesos*/
-        log.info("SAGA FINISH WITH ERRORS FOR EVENT {}", event.getId());
+        log.info("SAGA FINISH WITH ERRORS FOR EVENT {}!", event.getId());
         addHistory(event, "Saga finished with errors!");
 
         notifyFinishedSaga(event); /*saga finalizada mandando de volta para
@@ -71,7 +71,7 @@ public class OrchestratorService {
 
     /*continuar nossa saga*/
     public void continueSaga(Event event) {
-        ETopics topic = getTopic(event);
+        var topic = getTopic(event);
         sendToProducerWithTopic(event, topic);
 
     }

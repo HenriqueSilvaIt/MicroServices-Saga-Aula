@@ -21,5 +21,5 @@ public enum ETopics {
 
 
 
-    private String topic;
+    private final String topic;
 }

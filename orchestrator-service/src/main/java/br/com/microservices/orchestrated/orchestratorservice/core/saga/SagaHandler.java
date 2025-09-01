@@ -24,8 +24,8 @@ que essa classe é unica*/  class SagaHandler {
     public static final Object[] [] SAGA_HANDLER = {
 
             //ORCHESTRADOR
-            {ORCHESTRATOR, SUCCESS, PRODUCT_VALIDATION_SERVICE},/*Orchestrador começo agora está
-            com status SUCCESS, ele vai para o PRODUCT_VALIDATION_SERVICE*/
+            {ORCHESTRATOR, SUCCESS, PRODUCT_VALIDATION_SUCCESS},/*Orchestrador começo agora está
+            com status SUCCESS, ele vai para o PRODUCT_VALIDATION_SUCCESS*/
             {ORCHESTRATOR, FAIL, FINISH_FAIL}, /*Orchestrador  está
             com status FAIL, ele vai para o FINISH_FAIL*/
 
@@ -37,16 +37,16 @@ que essa classe é unica*/  class SagaHandler {
             já retorno para ORCHESTRADOR com FAIL ou seja já fez o rollback,
              ai ele vai finaliza a SAGA porque então n tem mais oque fazer porque n tem
              outro microsserviço antes dele*/
-            {PRODUCT_VALIDATION_SUCCESS, SUCCESS, PAYMENT_SUCCESS}, /*PRODUCT_VALIDATION_SUCCESS
+            {PRODUCT_VALIDATION_SERVICE, SUCCESS, PAYMENT_SUCCESS}, /*PRODUCT_VALIDATION_SUCCESS
             deu status sucesso, orchestrador manda um tópico para o PAYMENT_SUCCESS*/
 
             //PAYMENT SERVICE
             {PAYMENT_SERVICE, ROLLBACK_PENDING, PAYMENT_FAIL}, /* Se  PAYMENT_SERVICE
              deu falha ele vai retornar o ROLLBACK_PENDING e o orchestrador
              vai mandar o status de PAYMENT_FAIL para fazer o rollback*/
-            {PAYMENT_SUCCESS, FAIL, FINISH_FAIL, PRODUCT_VALIDATION_FAIL}, /*Se o PAYMENT_SERVICE
+            {PAYMENT_SERVICE, FAIL, PRODUCT_VALIDATION_FAIL}, /*Se o PAYMENT_SERVICE
             deu FAIL e já foi feito o rollback é enviado PRODUCT_VALIDATION_FAIL, fazer o rollback */
-            {PAYMENT_SUCCESS, SUCCESS,  INVENTORY_SUCCESS},  /*PAYMENT_SUCCESS
+            {PAYMENT_SERVICE, SUCCESS,  INVENTORY_SUCCESS},  /*PAYMENT_SERVICE
             deu status sucesso, orchestrador manda um tópico para o INVENTORY_SUCCESS*/
 
 
@@ -54,7 +54,7 @@ que essa classe é unica*/  class SagaHandler {
             {INVENTORY_SERVICE, ROLLBACK_PENDING, INVENTORY_FAIL}, /* Se INVENTORY_SERVICE
              deu falha ele vai retornar o ROLLBACK_PENDING e o orchestrador
              vai mandar o status de INVENTORY_SERVICE para fazer o rollback*/
-            {INVENTORY_SERVICE, FAIL, FINISH_FAIL, PAYMENT_FAIL}, /*Se o INVENTORY_SERVICE
+            {INVENTORY_SERVICE, FAIL, PAYMENT_FAIL}, /*Se o INVENTORY_SERVICE
             deu FAIL e já foi feito o rollback é enviado PAYMENT_FAIL, fazer o rollback */
             {INVENTORY_SERVICE, SUCCESS,  FINISH_SUCCESS}  /*INVENTORY_SERVICE
             deu status sucesso, retorna FINISH_SUCCESS para o Orchestrador
@@ -62,13 +62,13 @@ que essa classe é unica*/  class SagaHandler {
     };
 
 
-    public static final Integer EVENT_SOURCE_INDEX = 0; /*A origem
+    public static final int EVENT_SOURCE_INDEX = 0; /*A origem
      SOURCE que é o nome do serviço fica na coluna 0 da matriz que é a primeira coluna, porque matriz em java
      começa com a coluna zer o*/
-    public static final Integer EVENT_STATUS_INDEX = 1; /*O STATUS
+    public static final int EVENT_STATUS_INDEX = 1; /*O STATUS
      do evento fica na coluna 1 da matriz que é a segunda coluna, porque matriz em java
      começa com a coluna 0*/
-    public static final Integer TOPIC_INDEX = 2; /*O TÓPICO
+    public static final int TOPIC_INDEX = 2; /*O TÓPICO
      do evento fica na coluna 2 da matriz que é a terceira coluna, porque matriz em java
      começa com a coluna 0*/
 

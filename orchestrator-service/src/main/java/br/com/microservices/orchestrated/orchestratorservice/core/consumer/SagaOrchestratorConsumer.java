@@ -26,6 +26,9 @@ public class SagaOrchestratorConsumer {
             groupId = "${spring.kafka.consumer.group-id}", /*colocamos o group id que está application.yl*/
             topics = "${spring.kafka.topic.start-saga}"
     )
+
+    /*ESSE AQUI É QUANDO publicamos algo no orchestrador e ele continua
+    ou seja vai para  o próximo tópico*/
     public void consumeStartSagaEvent(String payload) {
         log.info("Receiving ending notification event {} from start-saga topic", payload); /*mostrar
         informação que recebemos*/
@@ -39,10 +42,9 @@ public class SagaOrchestratorConsumer {
             topics = "${spring.kafka.topic.orchestrator}"
     )
     public void consumeOrchestratorEvent(String payload) {
-        log.info("Receiving ending notification event {} from orchestrator topic", payload); /*mostrar
+        log.info("Receiving event {} from orchestrator topic", payload); /*mostrar
         informação que recebemos*/
-        Event event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
-        log.info(event.toString()); /*só para mostrar  o objeto que foi criado*/
+        var event = jsonUtil.toEvent(payload); /*converte json recebido para objeto*/
         orchestratorService.continueSaga(event);
     }
 
